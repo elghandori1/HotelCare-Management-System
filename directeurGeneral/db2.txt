@@ -1,0 +1,150 @@
+http://localhost/vichy_project/Reclamation.php
+============================database_vichy1============================
+drop database vichy1;
+
+create database vichy1;
+
+
+----------------------------
+CREATE TABLE gestions ( 
+idgestions INT PRIMARY KEY AUTO_INCREMENT,
+nom_reclamateur VARCHAR(200),
+nom_probleme VARCHAR(256), 
+status_gestion VARCHAR(200) DEFAULT 'en attente',
+date_reclamation DATE DEFAULT CURRENT_DATE, 
+date_validation DATE );
+
+INSERT INTO gestions VALUES
+(default,"youssef",'robéni','no-valid',NOW(),NOW()),(default,"youssef",'robéni','valid',NOW(),NOW()),
+(default,"youssef",'robéni','valid',NOW(),NOW()),
+(default,"youssef",'robéni','en-coure',NOW(),NOW());
+
+
+--------------------------------
+CREATE TABLE utilisateurs ( 
+id_user INT PRIMARY KEY AUTO_INCREMENT, 
+nom_user VARCHAR(256),
+role_user varchar(256), 
+login_user VARCHAR(255), 
+password_user VARCHAR(255), 
+pages VARCHAR(255), 
+FOREIGN KEY (id_user) REFERENCES gestions(idgestions) ON DELETE CASCADE );
+
+INSERT INTO utilisateurs VALUES(DEFAULT,'mohamed',"Technecien",'mohamed@gmail.com','mohamed123','Reclamation.php'),
+(DEFAULT,'youssef',"Reclamateur",'youssef@gmail.com','youssef123','Technecien.php');
+
+
+----------------------------------
+CREATE TABLE convrsations( 
+idConver INT PRIMARY KEY AUTO_INCREMENT, 
+conver_user VARCHAR(255),
+conver_technc VARCHAR(255), 
+FOREIGN KEY (idConver) REFERENCES gestions(idgestions) ON DELETE CASCADE, 
+FOREIGN KEY (idConver) REFERENCES utilisateurs(id_user) ON DELETE CASCADE );
+
+-----------------------------------
+
+CREATE TABLE problemes(
+idProbleme int ,
+nom_probleme varchar(256)
+);
+
+INSERT INTO problemes VALUES (1,'robiné'),(2,'fenetre'),(3,'porte');
+
+
+
+
+
+
+
+
+
+
+
+
+===============================================================
+
+==========
+<!-- formulaire -->
+<form action="" method="post" class="body card m-4 border p-3">
+  <div class="form-group  mt-4 d-flex justify-content-between align-items-center">
+   <div class="col-sm-2 col-form-label fs-5 mx-4 text-purple2 ">le probleme</div>
+
+  <!-- select-probleme -->
+    <div>
+  <?php 
+   $utils = $db->prepare("select nom_probleme from problemes");
+   $utils->execute();
+   $tab = $utils->fetchAll(PDO::FETCH_ASSOC);
+  ?>
+    <select name="type_probleme" class="form-select" style="width: 500px;">
+    <?php foreach ($tab as $ligne) : ?>
+    
+      <option value="<?= $ligne["nom_probleme"]?>"> <?= $ligne["nom_probleme"] ?></option>
+      <?php endforeach; ?>
+    </select>
+    </div>
+   <!-- end-select-probleme -->
+  </div>
+
+  <div class="form-group mt-4  d-flex justify-content-between align-items-center">
+    <div class="col-sm-2 col-form-label fs-5 text-purple2 mx-4">descriotion</div>
+    <div style="width: 500px;" >
+        <textarea  style="height: 80px;" name="description" class="form-control"  placeholder="entrez un description"></textarea>
+    </div>
+  </div>
+
+<div class="btns d-flex justify-content-center gap-3 mt-4">
+<button type="submit" class="btn btn-success col-4" name="send">valider</button>
+<button type="reset" class="btn btn-danger  col-4">annuler</button>
+</div>
+
+</form>
+<!-- end-formulaire -->
+<?php 
+ try {
+  if (isset($_POST["send"])) {
+      $nom_complete = $nom_user;
+      $type_probleme = $_POST["type_probleme"];
+      $description = $_POST["description"];
+      if (!empty($nom_complete) && !empty($type_probleme) &&!empty($description) ) {
+        $stmt = $db->prepare("INSERT INTO validations VALUES (default,:nom_recl,:nom_val,:descrpt,:status_val,NOW(),NOW())");
+        $flag= $stmt->execute([":nom_recl" => $nom_complete, ":nom_val" => $type_probleme, ":descrpt" => $description, ":status_val" =>"no-valid"]);
+        if ($flag) {
+               
+                 echo '<div class=" container text-center alert alert-success mt-1">Ajout réussi</div>';
+                } else {
+                    echo  '<div class=" container text-center alert alert-danger">Echec :(</div>';
+                }
+
+      }else{
+        echo '<div class=" container text-center alert alert-danger mt-1">Tous les champs sont obligatoires!</div>';
+          
+      }
+  }
+} catch (Exception | Error $e) {
+  echo "Erreur : " . $e->getMessage();
+}
+ob_end_flush();
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
