@@ -89,7 +89,7 @@ Below are some screenshots of the application:
 2. Import the `data.sql` file from the `databaseCode/` directory into your MySQL database.
 3. Configure the database connection in `config.php`.
 4. Start a local server (e.g., XAMPP, WAMP) and place the project in the `htdocs` directory.
-5. Access the application via `http://localhost/Projet_HotelPHP`.
+5. Access the application via `http://localhost/HotelCare-Management-System`.
 
 ## social media :
 - facebook page : MG-code
