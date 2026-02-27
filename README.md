@@ -1,4 +1,4 @@
-# Projet HotelPHP
+# Projet HotelCare-Management-System
 
 ## Description
 This project is a PHP-based hotel management system. It includes various modules for managing users, handling reclamations, and generating reports. The project is organized into different directories for administrators, technicians, and other roles.
